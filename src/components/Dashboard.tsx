@@ -4,9 +4,14 @@
 //   return <div>Dashboard</div>;
 // };
 
-import React from "react";
+import React, { useState } from "react";
 import logo from "../image/logo.svg";
+
+import { useNavigate } from "react-router";
 export const Dashboard = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
   return (
     <div className="position: fixed; z-index: 9999; inset: 16px; pointer-events: none;">
       <div className="min-h-screen bg-gray-50">
@@ -18,7 +23,13 @@ export const Dashboard = () => {
                 Hi,
                 <span> username</span>
               </p>
-              <button className="bg-white hover:bg-slate-50 border border-gray-300 px-7 py-1.5 rounded-full active:scale-95 transition-all cursor-pointer">
+              <button
+                className="bg-white hover:bg-slate-50 border border-gray-300 px-7 py-1.5 rounded-full active:scale-95 transition-all cursor-pointer"
+                onClick={() => {
+                  setIsOpen(false);
+                  navigate("/");
+                }}
+              >
                 Logout
               </button>
             </div>
