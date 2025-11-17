@@ -1,9 +1,27 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import { useUserStore } from "../store/useUserStore";
 
 export const Login = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+
+  const login = useUserStore((state) => state.login);
+
+  const handleLogin = () => {
+    const isValid = login(email, pass);
+
+    if (isValid) {
+      console.log("Login successful!");
+
+      navigate("/Dashboard"); // صفحه‌ای که بعدش می‌خوای بری
+    } else {
+      console.log("Email or password is incorrect!");
+    }
+  };
 
   return (
     <>
@@ -36,6 +54,8 @@ export const Login = () => {
                 type="text"
                 className="border-none"
                 placeholder="Email id"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
@@ -60,6 +80,8 @@ export const Login = () => {
                 type="text"
                 className="border-none"
                 placeholder="Password"
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
               />
             </div>
           </form>
@@ -70,7 +92,10 @@ export const Login = () => {
             </p>
           </div>
 
-          <div className="w-[284px] h-[44px] bg-[#19CE61] mt-[10px] rounded-[30px] flex justify-center items-center text-white cursor-pointer">
+          <div
+            className="w-[284px] h-[44px] bg-[#19CE61] mt-[10px] rounded-[30px] flex justify-center items-center text-white cursor-pointer"
+            onClick={handleLogin}
+          >
             Login
           </div>
 

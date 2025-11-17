@@ -6,21 +6,20 @@ export const GetStartLN = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const addUser = useUserStore((state) => state.addUser);
+  const register = useUserStore((state) => state.register);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [pass, setPass] = useState("");
 
   const handleSignUp = () => {
-    if (!name || !email || !password) {
-      alert("لطفا همه فیلدها را پر کنید");
+    if (!name || !email || !pass) {
+      alert("Please fill in all fields");
       return;
     }
 
-    addUser({ name, email, password });
-    alert("ثبت‌نام با موفقیت انجام شد!");
-    navigate("/Login"); // بعد از ثبت‌نام ببر به صفحه لاگین
+    register({ name, email, pass });
+    navigate("/Login");
   };
 
   return (
@@ -106,8 +105,8 @@ export const GetStartLN = () => {
                 type="text"
                 className="border-none"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
               />
             </div>
           </form>
