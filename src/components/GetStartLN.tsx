@@ -23,6 +23,10 @@ export const GetStartLN = () => {
       });
       return data;
     },
+    onSuccess: (_, variables) => {
+      localStorage.setItem("username", variables.name);
+      navigate("/Dashboard");
+    },
   });
 
   return (
@@ -36,8 +40,12 @@ export const GetStartLN = () => {
 
           <form
             className="flex flex-col justify-center items-center gap-[18px] mt-[20px] "
+            // onSubmit={handleSubmit(({ name, email, password }) => {
+            //   localStorage.setItem("username", name);
+            //   mutate({ name: name, email: email, password: password });
+            // })}
             onSubmit={handleSubmit(({ name, email, password }) => {
-              mutate({ name: name, email: email, password: password });
+              mutate({ name, email, password });
             })}
           >
             <div className="flex gap-[8px] justify-center items-center w-[284px] h-[48px]  border-1 border-gray-300/80 rounded-[30px]">
@@ -127,7 +135,9 @@ export const GetStartLN = () => {
 
             <button
               className="w-[284px] h-[44px] bg-[#19CE61] mt-[10px] rounded-[30px] flex justify-center items-center text-white cursor-pointer"
-              // onClick={handleSignUp}
+              // onClick={() => {
+              //   navigate("/Login");
+              // }}
               type="submit"
             >
               Sing up

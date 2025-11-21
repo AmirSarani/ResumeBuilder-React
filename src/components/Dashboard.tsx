@@ -8,9 +8,12 @@ import React, { useState } from "react";
 import logo from "../image/logo.svg";
 
 import { useNavigate } from "react-router";
+
 export const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+
+  const name = localStorage.getItem("username");
 
   return (
     <div className="position: fixed; z-index: 9999; inset: 16px; pointer-events: none;">
@@ -21,7 +24,7 @@ export const Dashboard = () => {
             <div className="flex items-center gap-4 text-sm">
               <p className="max-sm:hidden">
                 Hi,
-                <span> username</span>
+                <span> {name}</span>
               </p>
               <button
                 className="bg-white hover:bg-slate-50 border border-gray-300 px-7 py-1.5 rounded-full active:scale-95 transition-all cursor-pointer"
