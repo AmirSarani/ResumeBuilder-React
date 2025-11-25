@@ -1,120 +1,329 @@
-// import React from "react";
+// import { useEffect, useState } from "react";
+// import logo from "../image/logo.svg";
+// import { useNavigate } from "react-router";
+// import CreatedResume from "./CreatedResume";
+// import { useForm } from "react-hook-form";
+// import { useMutation } from "@tanstack/react-query";
+// import axios from "../api/axios";
 
 // export const Dashboard = () => {
-//   return <div>Dashboard</div>;
+//   const [isOpen, setIsOpen] = useState(false);
+//   const [resumes, setResumes] = useState([]);
+
+//   const navigate = useNavigate();
+//   const name = localStorage.getItem("username");
+
+//   const token = localStorage.getItem("token");
+
+//   interface NewResumeType {
+//     title: string;
+//   }
+
+//   const {
+//     register,
+//     formState: { errors },
+//     handleSubmit,
+//   } = useForm<NewResumeType>({
+//     defaultValues: { title: "" },
+//   });
+
+//   const { mutate, data, isSuccess } = useMutation({
+//     mutationFn: async (newResume: NewResumeType) => {
+//       const res = await axios.post(
+//         "/api/resumes/create",
+//         {
+//           title: newResume.title,
+//         },
+//         {
+//           headers: {
+//             authorization: token,
+//           },
+//         }
+//       );
+//       return res.data;
+//     },
+//   });
+
+//   useEffect(() => {
+//     if (isSuccess) {
+//       setIsOpen(false);
+//       navigate("/Dashboard");
+//     }
+//   }, [isSuccess]);
+
+//   return (
+//     <div className="min-h-screen bg-gray-50">
+//       <div className="shadow bg-white">
+//         <nav className="flex items-center justify-between max-w-7xl mx-auto px-4 py-3.5 text-slate-800">
+//           <img src={logo} alt="" />
+//           <div className="flex items-center gap-4 text-sm">
+//             <p className="max-sm:hidden">
+//               Hi,<span> {name}</span>
+//             </p>
+//             <button
+//               className="bg-white hover:bg-slate-50 border border-gray-300 px-7 py-1.5 rounded-full cursor-pointer"
+//               onClick={() => navigate("/")}
+//             >
+//               Logout
+//             </button>
+//           </div>
+//         </nav>
+//       </div>
+
+//       <div className="max-w-7xl mx-auto px-4 py-8">
+//         <div className="flex gap-4">
+//           <button
+//             onClick={() => setIsOpen(true)}
+//             className="w-full bg-white sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 text-slate-600 border border-dashed border-slate-300 hover:shadow-lg cursor-pointer"
+//           >
+//             <svg
+//               xmlns="http://www.w3.org/2000/svg"
+//               width="24"
+//               height="24"
+//               fill="none"
+//               stroke="currentColor"
+//               strokeWidth="2"
+//               strokeLinecap="round"
+//               strokeLinejoin="round"
+//               className="lucide lucide-plus size-11 p-2.5 bg-indigo-500 text-white rounded-full"
+//             >
+//               <path d="M5 12h14"></path>
+//               <path d="M12 5v14"></path>
+//             </svg>
+//             <p className="text-sm">Create Resume</p>
+//           </button>
+
+//           {isOpen && (
+//             <form
+//               onSubmit={handleSubmit((values) => mutate(values))}
+//               className="fixed inset-0 bg-black/70 backdrop-blur flex items-center justify-center"
+//             >
+//               <div className="relative bg-white border shadow-md rounded-lg w-full max-w-sm p-6">
+//                 <h2 className="text-xl font-bold mb-4">Create a Resume</h2>
+
+//                 <input
+//                   placeholder="Enter resume title"
+//                   className="w-full px-4 py-2 mb-4 border rounded"
+//                   type="text"
+//                   {...register("title", { required: "Title is required" })}
+//                 />
+
+//                 {errors.title && (
+//                   <p className="text-red-500 text-sm">{errors.title.message}</p>
+//                 )}
+
+//                 <button
+//                   type="submit"
+//                   className="w-full py-2 bg-green-600 text-white rounded cursor-pointer"
+//                 >
+//                   Create Resume
+//                 </button>
+
+//                 <svg
+//                   xmlns="http://www.w3.org/2000/svg"
+//                   width="24"
+//                   height="24"
+//                   fill="none"
+//                   stroke="currentColor"
+//                   strokeWidth="2"
+//                   strokeLinecap="round"
+//                   strokeLinejoin="round"
+//                   className="lucide lucide-x absolute top-4 right-4 text-slate-400 cursor-pointer"
+//                   onClick={() => setIsOpen(false)}
+//                 >
+//                   <path d="M18 6 6 18"></path>
+//                   <path d="m6 6 12 12"></path>
+//                 </svg>
+//               </div>
+//             </form>
+//           )}
+//         </div>
+
+//         <hr className="border-slate-300 my-6 sm:w-[305px]" />
+
+//         <div className="grid grid-cols-2 sm:flex flex-wrap gap-4">
+//           {resumes.map((resume, index) => (
+//             <CreatedResume
+//               key={index}
+//               filename={resume.filename}
+//               updatedLabel={resume.updatedLabel}
+//               updatedDate={resume.updatedDate}
+//             />
+//           ))}
+//         </div>
+//       </div>
+//     </div>
+//   );
 // };
 
-import React, { useState } from "react";
+import { useState } from "react";
 import logo from "../image/logo.svg";
-
 import { useNavigate } from "react-router";
+import CreatedResume from "./CreatedResume";
+import { useForm } from "react-hook-form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "../api/axios";
+
+// 1. تعریف ساختار دقیق دیتا طبق چیزی که فرستادی
+interface ResumeType {
+  _id: string;
+  title: string;
+  updatedAt: string;
+  // بقیه فیلدها رو فعلا نیاز نداریم توی لیست نشون بدیم، ولی بودنشان ضرر ندارد
+}
+
+interface NewResumeForm {
+  title: string;
+}
 
 export const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const name = localStorage.getItem("username");
+  const token = localStorage.getItem("token");
+
+  // 2. دریافت لیست رزومه‌ها از آدرس جدید
+  const { data: resumes = [] } = useQuery({
+    queryKey: ["resumes"],
+    queryFn: async () => {
+      const res = await axios.get("/api/users/resumes", {
+        // آدرس جدید
+        headers: { authorization: token },
+      });
+      // معمولا آرایه اصلی در res.data است. اگر داخل آبجکت دیگری بود (مثلا res.data.data) تغییرش بده.
+      return res.data;
+    },
+  });
+
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm<NewResumeForm>({
+    defaultValues: { title: "" },
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: async (newResume: NewResumeForm) => {
+      const res = await axios.post(
+        "/api/resumes/create", // فرض بر اینه که آدرس ساخت همون قبلیه
+        { title: newResume.title },
+        { headers: { authorization: token } }
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      // رفرش کردن لیست بعد از ساخت موفق
+      queryClient.invalidateQueries({ queryKey: ["resumes"] });
+      setIsOpen(false);
+      reset();
+    },
+  });
 
   return (
-    <div className="position: fixed; z-index: 9999; inset: 16px; pointer-events: none;">
-      <div className="min-h-screen bg-gray-50">
-        <div className="shadow bg-white">
-          <nav className="flex items-center justify-between max-w-7xl mx-auto px-4 py-3.5 text-slate-800 transition-all">
-            <img src={logo} alt="" />
-            <div className="flex items-center gap-4 text-sm">
-              <p className="max-sm:hidden">
-                Hi,
-                <span> {name}</span>
-              </p>
-              <button
-                className="bg-white hover:bg-slate-50 border border-gray-300 px-7 py-1.5 rounded-full active:scale-95 transition-all cursor-pointer"
-                onClick={() => {
-                  setIsOpen(false);
-                  navigate("/");
-                }}
-              >
-                Logout
-              </button>
-            </div>
-          </nav>
-        </div>
-        <div>
-          <div className="max-w-7xl mx-auto px-4 py-8">
-            <div className="flex gap-4 ">
-              <button className="w-full bg-white sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 text-slate-600 border border-dashed border-slate-300 group hover:border-indigo-500 hover:shadow-lg transition-all duration-300 cursor-pointer">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-plus size-11 transition-all duration-300 p-2.5 bg-gradient-to-br from-indigo-300 to-indigo-500 text-white rounded-full"
-                  aria-hidden="true"
-                >
-                  <path d="M5 12h14"></path>
-                  <path d="M12 5v14"></path>
-                </svg>
-                <p className="text-sm group-hover:text-indigo-600 transition-all duration-300">
-                  Create Resume
-                </p>
-              </button>
-              <button className="w-full bg-white sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 text-slate-600 border border-dashed border-slate-300 group hover:border-purple-500 hover:shadow-lg transition-all duration-300 cursor-pointer">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-cloud-upload size-11 transition-all duration-300 p-2.5 bg-gradient-to-br from-purple-300 to-purple-500 text-white rounded-full"
-                  aria-hidden="true"
-                >
-                  <path d="M12 13v8"></path>
-                  <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
-                  <path d="m8 17 4-4 4 4"></path>
-                </svg>
-                <p className="text-sm group-hover:text-purple-600 transition-all duration-300">
-                  Upload Existing
-                </p>
-              </button>
-            </div>
-            <hr className="border-slate-300 my-6 sm:w-[305px]" />
-            <div className="grid grid-cols-2 sm:flex flex-wrap gap-4 ">
-              <button className="added-resume relative w-full sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 border group hover:shadow-lg transition-all duration-300 cursor-pointer">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-file-pen-line size-7 group-hover:scale-105 transition-all text-[#9333ea]"
-                  aria-hidden="true"
-                >
-                  <path d="m18 5-2.414-2.414A2 2 0 0 0 14.172 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2"></path>
-                  <path d="M21.378 12.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"></path>
-                  <path d="M8 18h1"></path>
-                </svg>
-                <p className="text-sm group-hover:scale-105 transition-all px-2 text-center text-[#9333ea]">
-                  test.hh
-                </p>
-                <p className="absolute bottom-1 text-[11px] text-slate-400 group-hover:text-slate-500 transition-all duration-300 px-2 text-center">
-                  <span>test Updated on </span>
-                  <span>test date 11/15/2025</span>
-                </p>
-              </button>
-            </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="shadow bg-white">
+        <nav className="flex items-center justify-between max-w-7xl mx-auto px-4 py-3.5 text-slate-800">
+          <img src={logo} alt="logo" />
+          <div className="flex items-center gap-4 text-sm">
+            <p className="max-sm:hidden">
+              Hi,<span> {name}</span>
+            </p>
+            <button
+              className="bg-white hover:bg-slate-50 border border-gray-300 px-7 py-1.5 rounded-full cursor-pointer"
+              onClick={() => navigate("/")}
+            >
+              Logout
+            </button>
           </div>
+        </nav>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex gap-4">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="w-full bg-white sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 text-slate-600 border border-dashed border-slate-300 hover:shadow-lg cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-plus size-11 p-2.5 bg-indigo-500 text-white rounded-full"
+            >
+              <path d="M5 12h14"></path>
+              <path d="M12 5v14"></path>
+            </svg>
+            <p className="text-sm">Create Resume</p>
+          </button>
+
+          {isOpen && (
+            <form
+              onSubmit={handleSubmit((values) => mutate(values))}
+              className="fixed inset-0 bg-black/70 backdrop-blur flex items-center justify-center"
+            >
+              <div className="relative bg-white border shadow-md rounded-lg w-full max-w-sm p-6">
+                <h2 className="text-xl font-bold mb-4">Create a Resume</h2>
+
+                <input
+                  placeholder="Enter resume title"
+                  className="w-full px-4 py-2 mb-4 border rounded"
+                  type="text"
+                  {...register("title", { required: "Title is required" })}
+                />
+
+                {errors.title && (
+                  <p className="text-red-500 text-sm">{errors.title.message}</p>
+                )}
+
+                <button
+                  type="submit"
+                  className="w-full py-2 bg-green-600 text-white rounded cursor-pointer"
+                >
+                  Create Resume
+                </button>
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-x absolute top-4 right-4 text-slate-400 cursor-pointer"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <path d="M18 6 6 18"></path>
+                  <path d="m6 6 12 12"></path>
+                </svg>
+              </div>
+            </form>
+          )}
+        </div>
+
+        <hr className="border-slate-300 my-6 sm:w-[305px]" />
+
+        <div className="grid grid-cols-2 sm:flex flex-wrap gap-4">
+          {/* 3. نمایش دیتا بر اساس فیلدهای واقعی API */}
+          {resumes.map((resume: ResumeType) => (
+            <CreatedResume
+              key={resume._id} // استفاده از _id دیتابیس
+              filename={resume.title} // استفاده از title دیتابیس
+              updatedLabel="Last Updated"
+              // تبدیل تاریخ 2025-11-22T... به فرمت خوانا
+              updatedDate={new Date(resume.updatedAt).toLocaleDateString()}
+            />
+          ))}
         </div>
       </div>
     </div>
