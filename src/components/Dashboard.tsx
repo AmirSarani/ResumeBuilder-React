@@ -6,12 +6,10 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "../api/axios";
 
-// 1. تعریف ساختار دقیق دیتا طبق چیزی که فرستادی
 interface ResumeType {
   _id: string;
   title: string;
   updatedAt: string;
-  // بقیه فیلدها رو فعلا نیاز نداریم توی لیست نشون بدیم، ولی بودنشان ضرر ندارد
 }
 
 interface NewResumeForm {
@@ -26,15 +24,13 @@ export const Dashboard = () => {
   const name = localStorage.getItem("username");
   const token = localStorage.getItem("token");
 
-  // 2. دریافت لیست رزومه‌ها از آدرس جدید
   const { data: resumes = [] } = useQuery({
     queryKey: ["resumes"],
     queryFn: async () => {
       const res = await axios.get("/api/users/resumes", {
-        // آدرس جدید
         headers: { authorization: token },
       });
-      // معمولا آرایه اصلی در res.data است. اگر داخل آبجکت دیگری بود (مثلا res.data.data) تغییرش بده.
+
       return res.data.resumes;
     },
   });
@@ -51,7 +47,7 @@ export const Dashboard = () => {
   const { mutate } = useMutation({
     mutationFn: async (newResume: NewResumeForm) => {
       const res = await axios.post(
-        "/api/resumes/create", // فرض بر اینه که آدرس ساخت همون قبلیه
+        "/api/resumes/create",
         { title: newResume.title },
         { headers: { authorization: token } }
       );
@@ -61,6 +57,21 @@ export const Dashboard = () => {
       queryClient.invalidateQueries({ queryKey: [resumes] });
       setIsOpen(false);
       navigate("/ResumeInputeBuilder");
+    },
+  });
+
+  const { mutate: deleteResume, isPending } = useMutation({
+    mutationFn: async (id) => {
+      const del = await axios.delete(`/api/resumes/delete/${id}`, {
+        headers: { authorization: token },
+      });
+      return del.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries([resumes]);
+    },
+    onSettled: () => {
+      console.log("رزومه با موفقیت حذف شد");
     },
   });
 
@@ -109,7 +120,7 @@ export const Dashboard = () => {
           {isOpen && (
             <form
               onSubmit={handleSubmit((values) => mutate(values))}
-              className="fixed inset-0 bg-black/70 backdrop-blur flex items-center justify-center z-[999]"
+              className="fixed inset-0 bg-black/70 backdrop-blur flex items-center justify-center z-999"
             >
               <div className="relative bg-white border shadow-md rounded-lg w-full max-w-sm p-6">
                 <h2 className="text-xl font-bold mb-4">Create a Resume</h2>
@@ -162,7 +173,7 @@ export const Dashboard = () => {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="lucide lucide-cloud-upload size-11 transition-all duration-300 p-2.5 bg-gradient-to-br from-purple-300 to-purple-500 text-white rounded-full"
+              className="lucide lucide-cloud-upload size-11 transition-all duration-300 p-2.5 bg-linear-to-br from-purple-300 to-purple-500 text-white rounded-full"
             >
               <path d="M12 13v8"></path>
               <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
@@ -177,14 +188,14 @@ export const Dashboard = () => {
         <hr className="border-slate-300 my-6 sm:w-[305px]" />
 
         <div className="grid grid-cols-2 sm:flex flex-wrap gap-4">
-          {/* 3. نمایش دیتا بر اساس فیلدهای واقعی API */}
           {resumes?.map((resume: ResumeType) => (
             <CreatedResume
-              key={resume._id} // استفاده از _id دیتابیس
-              filename={resume.title} // استفاده از title دیتابیس
+              key={resume._id}
+              filename={resume.title}
               updatedLabel="Last Updated"
-              // تبدیل تاریخ 2025-11-22T... به فرمت خوانا
               updatedDate={new Date(resume.updatedAt).toLocaleDateString()}
+              onDelete={() => deleteResume(resume._id)}
+              onEdit={() => console.log("سلام - ادیت شد: " + resume._id)}
             />
           ))}
         </div>

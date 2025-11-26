@@ -40,10 +40,6 @@ export const GetStartLN = () => {
 
           <form
             className="flex flex-col justify-center items-center gap-[18px] mt-[20px] "
-            // onSubmit={handleSubmit(({ name, email, password }) => {
-            //   localStorage.setItem("username", name);
-            //   mutate({ name: name, email: email, password: password });
-            // })}
             onSubmit={handleSubmit(({ name, email, password }) => {
               mutate({ name, email, password });
             })}
@@ -68,8 +64,6 @@ export const GetStartLN = () => {
                 type="text"
                 className="border-none"
                 placeholder="Name"
-                // value={name}
-                // onChange={(e) => setName(e.target.value)}
                 {...register("name", { required: true })}
               />
               {errors.name && <p className="text-red-600">error name</p>}
@@ -95,8 +89,6 @@ export const GetStartLN = () => {
                 type="text"
                 className="border-none"
                 placeholder="Email id"
-                // value={email}
-                // onChange={(e) => setEmail(e.target.value)}
                 {...register("email", { required: true })}
               />
             </div>
@@ -121,8 +113,6 @@ export const GetStartLN = () => {
                 type="text"
                 className="border-none"
                 placeholder="Password"
-                // value={pass}
-                // onChange={(e) => setPass(e.target.value)}
                 {...register("password", { required: true })}
               />
             </div>
@@ -135,9 +125,6 @@ export const GetStartLN = () => {
 
             <button
               className="w-[284px] h-[44px] bg-[#19CE61] mt-[10px] rounded-[30px] flex justify-center items-center text-white cursor-pointer"
-              // onClick={() => {
-              //   navigate("/Login");
-              // }}
               type="submit"
             >
               Sing up

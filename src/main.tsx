@@ -8,7 +8,6 @@ import { GetStartLN } from "./components/GetStartLN";
 import { Login } from "./components/Login";
 import { Dashboard } from "./components/Dashboard";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-// import BuildProfessionalResume from "./components/BuildProfessionalResume";
 import { ResumeInputeBuilder } from "./components/ResumeInputeBuilder";
 
 const router = createBrowserRouter([
