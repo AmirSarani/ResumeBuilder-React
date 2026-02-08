@@ -1,4 +1,3 @@
-import React from "react";
 import AiAlert from "../components/AiAlert";
 import HeaderLand from "../components/HeaderLand";
 import BuildYourResume from "../components/BuildYourResume";

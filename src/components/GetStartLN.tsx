@@ -3,6 +3,12 @@ import { useNavigate } from "react-router";
 import axios from "../api/axios";
 import { useMutation } from "@tanstack/react-query";
 
+type NewUser = {
+  name: string;
+  email: string;
+  password: string;
+};
+
 export const GetStartLN = () => {
   const navigate = useNavigate();
 
@@ -15,7 +21,7 @@ export const GetStartLN = () => {
   });
 
   const { mutate } = useMutation({
-    mutationFn: async (newUser) => {
+    mutationFn: async (newUser: NewUser) => {
       const { data } = await axios.post("/api/users/register", {
         name: newUser.name,
         email: newUser.email,

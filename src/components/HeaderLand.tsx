@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import logo from "../image/logo.svg";
 import aiProfile1 from "../image/ai-profile-1.jpg";
 import aiProfile2 from "../image/ai-profile-2.jpg";
@@ -12,7 +12,7 @@ import walmart from "../image/walmart.svg";
 import { useNavigate } from "react-router";
 
 const HeaderLand = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [_, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
   return (

@@ -1,10 +1,18 @@
+type CreatedResumeProps = {
+  filename: string;
+  updatedLabel: string;
+  updatedDate: string;
+  onDelete?: () => void;
+  onEdit?: () => void;
+};
+
 const CreatedResume = ({
   filename,
   updatedLabel,
   updatedDate,
   onDelete,
   onEdit,
-}) => {
+}: CreatedResumeProps) => {
   return (
     <div className="grid grid-cols-2 sm:flex flex-wrap gap-4 ">
       <button className="added-resume relative w-[500px] sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 border group hover:shadow-lg transition-all duration-300 cursor-pointer">

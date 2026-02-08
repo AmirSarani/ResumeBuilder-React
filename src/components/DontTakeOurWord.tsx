@@ -1,4 +1,3 @@
-import React from "react";
 import animateSliderImg1 from "../image/animate-slider-img-1.avif";
 import animateSliderImg2 from "../image/animate-slider-img-2.avif";
 import animateSliderImg3 from "../image/animate-slider-img-3.jpg";

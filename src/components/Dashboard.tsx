@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import logo from "../image/logo.svg";
 import { useNavigate } from "react-router";
 import CreatedResume from "./CreatedResume";
@@ -39,7 +39,6 @@ export const Dashboard = () => {
     register,
     formState: { errors },
     handleSubmit,
-    reset,
   } = useForm<NewResumeForm>({
     defaultValues: { title: "" },
   });
@@ -49,7 +48,7 @@ export const Dashboard = () => {
       const res = await axios.post(
         "/api/resumes/create",
         { title: newResume.title },
-        { headers: { authorization: token } }
+        { headers: { authorization: token } },
       );
       return res.data;
     },
@@ -60,15 +59,15 @@ export const Dashboard = () => {
     },
   });
 
-  const { mutate: deleteResume, isPending } = useMutation({
-    mutationFn: async (id) => {
+  const { mutate: deleteResume } = useMutation({
+    mutationFn: async (id: string) => {
       const del = await axios.delete(`/api/resumes/delete/${id}`, {
         headers: { authorization: token },
       });
       return del.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries([resumes]);
+      queryClient.invalidateQueries({ queryKey: ["resumes"] });
     },
     onSettled: () => {
       console.log("رزومه با موفقیت حذف شد");

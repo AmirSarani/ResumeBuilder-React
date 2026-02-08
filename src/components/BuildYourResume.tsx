@@ -1,4 +1,3 @@
-import React from "react";
 import groupImage1 from "../image/group-image-1.png";
 
 const BuildYourResume = () => {

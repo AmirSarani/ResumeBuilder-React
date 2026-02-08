@@ -15,18 +15,14 @@ export const ResumeInputeBuilder = () => {
     phone: string;
     profession: string;
     website: string;
+    avatar: string;
   }
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm<InputData>();
+  const { register, handleSubmit, watch } = useForm<InputData>();
 
   const allValues = watch();
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: InputData) => {
     console.log("FORM DATA:", data);
   };
 
